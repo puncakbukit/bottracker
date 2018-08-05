@@ -1,9 +1,6 @@
-# Steem Bot Tracker Website
-The #1 place for information on voting bots and other options to profitably promote your posts on Steem! Currently live and hosted at [https://steembottracker.com](https://steembottracker.com).
+# Steem Upvote Bot Tracker @puncakbukit: Shows Current ROI & Last ROI Of Each Bot In Front Page
+The Steem Upvote Bot Tracker that shows current ROI & last ROI of each bot in front page. Currently live and hosted at [http://steem.puncakbukit.net/](http://steem.puncakbukit.net/).
 
 ## Website Components / Tools
 - Bid-Based Voting bots
-- Content Promotion Services
-- Other Bots
-- Bot Owner Configuration Tool
-- Curation Rewards Estimation Tool
+- Shows Current ROI & Last ROI Of Each Bot In Front Page
