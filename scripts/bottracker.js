@@ -35,7 +35,8 @@ $(function () {
 	}
 
 	function sendNotification(bot, bid) {
-		if(!notifications_enabled)
+		return;
+		/*if(!notifications_enabled)
 			return;
 		
 		try {
@@ -47,7 +48,7 @@ $(function () {
 					body: "@" + bot + ' is currently showing a profitable bidding opportunity! Max profitable bid is $' + bid.formatMoney() + ' SBD.'
 				});
 			}
-		} catch (err) { }
+		} catch (err) { }*/
 	}
 
 	function loadPrices(callback) {
@@ -125,6 +126,7 @@ $(function () {
 	}
 
 	function loadPromotionServices() {
+		/*
 		steem.api.getAccounts(['smartsteem', 'booster', 'minnowbooster', 'tipu'], function (err, result) {
 			try {
 				var account = result[0];
@@ -186,7 +188,7 @@ $(function () {
 			data.how_to.forEach(function (item) {
 				$('#smartsteem-howto').append($('<li>' + item + '</li>'));
 			});
-		});
+		});*/
 	}
 
 	function showBidBots() {
@@ -389,7 +391,66 @@ $(function () {
 		dropdown_container.append(dropdown);
 		td.append(dropdown_container);
 		row.append(td);
+		
+		$.get(api_url + '/bid_bots/' + bot.name, function(data) {
+			/*var cur_table = $('#bid_details_table_cur tbody');
+			cur_table.empty();
+			var last_table = $('#bid_details_table_last tbody');
+			last_table.empty();*/
 
+			if (data && data.current_round) {
+				data.current_round.round_total = data.current_round.reduce(function(t, b) { return t + getUsdValue(b); }, 0);
+				/*populateRoundDetailTable(cur_table, bot, data.current_round);
+
+				$('#cur_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+				$('#cur_round_bids').text(sumBids(data.current_round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(data.current_round, 'STEEM').formatMoney() + ' STEEM' : ''));
+				$('#cur_round_value').text('$' + bot.total_usd.formatMoney());*/
+
+				var roi = (((bot.vote_usd * AUTHOR_REWARDS / data.current_round.round_total) - 1) * 100);
+				if(bot.max_roi)
+					roi = Math.min(bot.max_roi, roi);
+
+				$('#cur_round_roi').text(roi.formatMoney() + '% (After Curation' + (bot.max_roi ? ' - Capped)' : ')'));
+
+				td = $(document.createElement('td'));
+				td.text(roi.formatMoney() + '% (After Curation' + (bot.max_roi ? ' - Capped)' : ')'));
+				row.append(td);
+			}
+
+			if (data && data.last_round) {
+				data.last_round.round_total = data.last_round.reduce(function(t, b) { return t + getUsdValue(b); }, 0);
+				/*populateRoundDetailTable(last_table, bot, data.last_round);
+
+				$('#last_round_vote').text(formatCurrencyVote(bot) + ' (' + (bot.interval / 2.4 * 100) + '%)');
+				$('#last_round_bids').text(sumBids(data.last_round, 'SBD').formatMoney() + ' SBD' + (bot.accepts_steem ? ' & ' + sumBids(data.last_round, 'STEEM').formatMoney() + ' STEEM' : ''));
+				$('#last_round_value').text('$' + data.last_round.round_total.formatMoney());*/
+
+				var roi = (((bot.vote_usd * AUTHOR_REWARDS / data.last_round.round_total) - 1) * 100);
+				if(bot.max_roi)
+					roi = Math.min(bot.max_roi, roi);
+
+				$('#last_round_roi').text(roi.formatMoney() + '% (After Curation' + (bot.max_roi ? ' - Capped)' : ')'));
+
+				td = $(document.createElement('td'));
+				td.text(roi.formatMoney() + '% (After Curation' + (bot.max_roi ? ' - Capped)' : ')'));
+				row.append(td);
+			}
+
+			/*$('#cur_round_show').click(function (e) {
+					$('#cur_round').show();
+					$('#cur_round_show').parent().addClass('active');
+					$('#last_round').hide();
+					$('#last_round_show').parent().removeClass('active');
+			});
+
+			$('#last_round_show').click(function (e) {
+					$('#cur_round').hide();
+					$('#cur_round_show').parent().removeClass('active');
+					$('#last_round').show();
+					$('#last_round_show').parent().addClass('active');
+			});*/
+		});
+		
 		if ((bid_sbd > 0 || bid_steem > 0) && bot.next < 0.16 * HOURS && bot.last > 0.5 * HOURS) {
 			row.addClass('green-bg');
 
@@ -813,10 +874,10 @@ $(function () {
       showBidBots();
     }
 
-    $('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
+    /*$('#minnowbooster-submit').click(function () { sendBid({ name: 'minnowbooster', min_bid: 0.01, max_post_age: 6.3 }); });
     $('#booster-submit').click(function () { sendBid({ name: 'booster', min_bid: 1, max_post_age: 3.5 }); });
 		$('#smartsteem-submit').click(function () { sendBid({ name: 'smartmarket', min_bid: 0.1, max_post_age: 6.3 }); });
-		$('#tipu-submit').click(function () { sendBid({ name: 'tipu', min_bid: 0.5, max_post_age: 6 }); });
+		$('#tipu-submit').click(function () { sendBid({ name: 'tipu', min_bid: 0.5, max_post_age: 6 }); });*/
 
     // Initialize and try to log in with SteemConnect V2
     var token = getURLParameter('access_token') ? getURLParameter('access_token') : localStorage.getItem('access_token');
